@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api
+  namespace: fcg
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: payments-api
+
+  template:
+    metadata:
+      labels:
+        app: payments-api
+
+    spec:
+      containers:
+        - name: payments-api
+          image: fiaptechchallenge.azurecr.io/payments-api
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8080
+
+          env:
+
+            # =========================================
+            # CONFIG MAP
+            # =========================================
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: payments-api-config
+                  key: ASPNETCORE_ENVIRONMENT
+
+            - name: RabbitMQ__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: payments-api-config
+                  key: RabbitMQ__Host
+
+            - name: RabbitMQ__Port
+              valueFrom:
+                configMapKeyRef:
+                  name: payments-api-config
+                  key: RabbitMQ__Port
+
+            - name: RabbitMQ__Queues__FCG_Payment
+              valueFrom:
+                configMapKeyRef:
+                  name: payments-api-config
+                  key: RabbitMQ__Queues__FCG_Payment
+
+            - name: RabbitMQ__Queues__FCG_Catalog
+              valueFrom:
+                configMapKeyRef:
+                  name: catalog-api-config
+                  key: RabbitMQ__Queues__FCG_Catalog
+
+            - name: RabbitMQ__Queues__FCG_Notification
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: RabbitMQ__Queues__FCG_Notification
+
+            - name: MongoSettings__Database
+              valueFrom:
+                configMapKeyRef:
+                  name: payments-api-config
+                  key: MongoSettings__Database
+
+            - name: MongoSettings__AuditLogsCollection
+              valueFrom:
+                configMapKeyRef:
+                  name: payments-api-config
+                  key: MongoSettings__AuditLogsCollection
+
+            # =========================================
+            # SECRET
+            # =========================================
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: payments-api-secret
+                  key: ConnectionStrings__DefaultConnection
+
+            - name: RabbitMQ__Username
+              valueFrom:
+                secretKeyRef:
+                  name: payments-api-secret
+                  key: RabbitMQ__Username
+
+            - name: RabbitMQ__Password
+              valueFrom:
+                secretKeyRef:
+                  name: payments-api-secret
+                  key: RabbitMQ__Password
+
+            - name: MongoSettings__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: payments-api-secret
+                  key: MongoSettings__ConnectionString
+
+            - name: ConnectionStrings__Redis
+              valueFrom:
+                secretKeyRef:
+                  name: payments-api-secret
+                  key: ConnectionStrings__Redis

@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications-api
+  namespace: fcg
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: notifications-api
+
+  template:
+    metadata:
+      labels:
+        app: notifications-api
+
+    spec:
+      containers:
+        - name: notifications-api
+          image: fiaptechchallenge.azurecr.io/notifications-api
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8080
+
+          env:
+
+            # =========================================
+            # CONFIG MAP
+            # =========================================
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: ASPNETCORE_ENVIRONMENT
+
+            - name: RabbitMQ__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: RabbitMQ__Host
+
+            - name: RabbitMQ__Port
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: RabbitMQ__Port
+
+            - name: RabbitMQ__Queues__FCG_User
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: RabbitMQ__Queues__FCG_User
+
+            - name: RabbitMQ__Queues__FCG_Notification
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: RabbitMQ__Queues__FCG_Notification
+
+            - name: API_Users__URL
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: API_Users__URL
+
+            - name: URL_API_Catalog
+              valueFrom:
+                configMapKeyRef:
+                  name: notifications-api-config
+                  key: URL_API_Catalog
+
+            # =========================================
+            # SECRET
+            # =========================================
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-api-secret
+                  key: ConnectionStrings__DefaultConnection
+
+            - name: RabbitMQ__Username
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-api-secret
+                  key: RabbitMQ__Username
+
+            - name: RabbitMQ__Password
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-api-secret
+                  key: RabbitMQ__Password
+
+            - name: API_Users__Email
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-api-secret
+                  key: API_Users__Email
+
+            - name: API_Users__Senha
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-api-secret
+                  key: API_Users__Senha

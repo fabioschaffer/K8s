@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-api-config
+  namespace: fcg
+data:
+  ASPNETCORE_ENVIRONMENT: Production
+
+  RabbitMQ__Host: rabbitmq
+  RabbitMQ__Port: "5672"
+
+  RabbitMQ__Queues__FCG_Payment: FGC-queue-payment
+  RabbitMQ__Queues__FCG_Catalog: FGC-queue-catalog
+  RabbitMQ__Queues__FCG_Notification: FGC-queue-notification
+
+  MongoSettings__Database: fcg_payments
+  MongoSettings__AuditLogsCollection: payment_audit_logs
